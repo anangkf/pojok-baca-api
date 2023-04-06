@@ -1,0 +1,31 @@
+{
+  "env": {
+      "browser": true,
+      "commonjs": true,
+      "es2021": true
+  },
+  "extends": "airbnb-base",
+  "overrides": [
+  ],
+  "parserOptions": {
+      "ecmaVersion": "latest"
+  },
+  "rules": {
+    "linebreak-style": ["error", "windows"],
+    "no-console": "off",
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^",
+        "varsIgnorePattern": "^",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+  "class-methods-use-this": "off",
+  "security/detect-object-injection": "off",
+  "indent": [
+    "error",
+    2
+  ]
+  }
+}
