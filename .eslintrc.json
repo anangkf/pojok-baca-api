@@ -1,14 +1,13 @@
 {
   "env": {
-      "browser": true,
-      "commonjs": true,
-      "es2021": true
+    "browser": true,
+    "commonjs": true,
+    "es2021": true
   },
   "extends": "airbnb-base",
-  "overrides": [
-  ],
+  "overrides": [],
   "parserOptions": {
-      "ecmaVersion": "latest"
+    "ecmaVersion": "latest"
   },
   "rules": {
     "linebreak-style": ["off"],
@@ -21,11 +20,8 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
-  "class-methods-use-this": "off",
-  "security/detect-object-injection": "off",
-  "indent": [
-    "error",
-    2
-  ]
+    "class-methods-use-this": "off",
+    "security/detect-object-injection": "off",
+    "indent": ["error", 2]
   }
 }

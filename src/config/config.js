@@ -1,4 +1,4 @@
-require('dotenv').config();
+const CONST = require('../utils/constant');
 
 const {
   PG_HOST,
@@ -7,7 +7,7 @@ const {
   PG_DB_NAME,
   PG_SCHEMA,
   DB_DIALECT,
-} = process.env;
+} = CONST;
 
 module.exports = {
   development: {
