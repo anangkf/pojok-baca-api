@@ -1,9 +1,11 @@
 const httpStatus = require('http-status');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const catchAsync = require('../utils/catchAsync');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { userRegisterSchema } = require('../validator/auth.validator');
+const CONST = require('../utils/constant');
 
 /**
  * TESTING
@@ -23,6 +25,29 @@ const registerUser = catchAsync(async (req, res, next) => {
   return res.status(httpStatus.CREATED).json(savedUser);
 });
 
+const userLogin = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ where: { email } });
+  const isPasswordCorrect = !user
+    ? null
+    : await bcrypt.compare(password, user.passwordHash);
+
+  if (!(user && isPasswordCorrect)) {
+    return res.status(httpStatus.UNAUTHORIZED).send(new ApiError(httpStatus.UNAUTHORIZED, 'invalid email or password'));
+  }
+
+  const userForToken = {
+    sub: user.id,
+    email,
+    role: 'user',
+  };
+
+  const accessToken = jwt.sign(userForToken, CONST.JWT_SECRET, { expiresIn: '1d' });
+  const refreshToken = jwt.sign(userForToken, CONST.JWT_RT_SECRET, { expiresIn: '7d' });
+  return res.json({ accessToken, refreshToken });
+});
+
 module.exports = {
   registerUser,
+  userLogin,
 };
