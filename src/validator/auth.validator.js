@@ -15,7 +15,13 @@ const userLoginSchema = Joi.object({
   password: Joi.string().min(8).required(),
 });
 
+const adminAuthSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(8).required(),
+});
+
 module.exports = {
   userRegisterSchema,
   userLoginSchema,
+  adminAuthSchema,
 };

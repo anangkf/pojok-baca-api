@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const catchAsync = require('../utils/catchAsync');
-const { User } = require('../models');
+const { User, Admin } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { userRegisterSchema } = require('../validator/auth.validator');
 const CONST = require('../utils/constant');
@@ -15,9 +15,7 @@ const CONST = require('../utils/constant');
  */
 const registerUser = catchAsync(async (req, res, next) => {
   const { body } = req;
-  if (!body.password) return res.status(httpStatus.BAD_REQUEST).send(new ApiError(httpStatus.BAD_REQUEST, 'Password cannot be null'));
-  userRegisterSchema.validate(body);
-  const passwordHash = bcrypt.hashSync(body.password, 9);
+  const passwordHash = await bcrypt.hash(body.password, 9);
   delete body.password;
 
   const savedUser = await User.create({ ...body, passwordHash });
@@ -47,7 +45,18 @@ const userLogin = catchAsync(async (req, res, next) => {
   return res.json({ accessToken, refreshToken });
 });
 
+const registerAdmin = catchAsync(async (req, res) => {
+  const { body } = req;
+  const passwordHash = await bcrypt.hash(body.password, 9);
+  delete body.password;
+
+  const savedAdmin = await Admin.create({ ...body, passwordHash });
+
+  return res.status(httpStatus.CREATED).json(savedAdmin);
+});
+
 module.exports = {
   registerUser,
   userLogin,
+  registerAdmin,
 };
