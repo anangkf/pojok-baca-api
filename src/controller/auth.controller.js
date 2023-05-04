@@ -55,8 +55,31 @@ const registerAdmin = catchAsync(async (req, res) => {
   return res.status(httpStatus.CREATED).json(savedAdmin);
 });
 
+const adminLogin = catchAsync(async (req, res) => {
+  const { email, password } = req.body;
+  const admin = await Admin.findOne({ where: { email } });
+  const isPasswordCorrect = !admin
+    ? null
+    : await bcrypt.compare(password, admin.passwordHash);
+
+  if (!(admin && isPasswordCorrect)) {
+    return res.status(httpStatus.UNAUTHORIZED).send(new ApiError(httpStatus.UNAUTHORIZED, 'invalid email or password'));
+  }
+
+  const adminForToken = {
+    sub: admin.id,
+    email,
+    role: 'admin',
+  };
+
+  const accessToken = jwt.sign(adminForToken, CONST.JWT_SECRET, { expiresIn: '1d' });
+  const refreshToken = jwt.sign(adminForToken, CONST.JWT_RT_SECRET, { expiresIn: '7d' });
+  return res.json({ accessToken, refreshToken });
+});
+
 module.exports = {
   registerUser,
   userLogin,
   registerAdmin,
+  adminLogin,
 };
