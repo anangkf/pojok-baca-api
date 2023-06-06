@@ -9,6 +9,7 @@
   "parserOptions": {
     "ecmaVersion": "latest"
   },
+  "plugins": ["jest"],
   "rules": {
     "linebreak-style": ["off"],
     "no-console": "off",
@@ -22,6 +23,11 @@
     ],
     "class-methods-use-this": "off",
     "security/detect-object-injection": "off",
-    "indent": ["error", 2]
+    "indent": ["error", 2],
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error"
   }
 }
