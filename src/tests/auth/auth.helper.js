@@ -1,13 +1,7 @@
-const { User } = require('../../models/index');
+const { User, Admin } = require('../../models/index');
 
-const usersInDB = async () => {
-  try {
-    return await User.findAll();
-  } catch (error) {
-    console.log('error getting users in db', error);
-    throw new Error(error.message);
-  }
-};
+const usersInDB = async () => User.findAll();
+const adminsInDB = async () => Admin.findAll();
 
 module.exports = {
   usersInDB,
@@ -92,5 +86,48 @@ module.exports = {
   userCredentials: {
     email: 'test@mail.com',
     password: 'test1234',
+  },
+  adminsInDB,
+  initialAdmin: [
+    {
+      email: 'admin@gmail.com',
+      password: 'admin123',
+    },
+  ],
+  validAdminData: {
+    email: 'superadmin@gmail.com',
+    password: 'superadmin123',
+  },
+  adminWithInvalidEmail: {
+    email: 'superadmin.com',
+    password: 'superadmin123',
+  },
+  adminWithInvalidEmailResponse: {
+    message: [
+      '"email" must be a valid email',
+    ],
+    statusCode: 400,
+    stack: 'ValidationError: "email" must be a valid email',
+  },
+  adminWithInvalidPassword: {
+    email: 'superadmin@gmail.com',
+    password: ['superadmin123'],
+  },
+  adminWithInvalidPasswordResponse: {
+    message: [
+      '"password" must be a string',
+    ],
+    statusCode: 400,
+    stack: 'ValidationError: "password" must be a string',
+  },
+  adminWithEmailRegistered: {
+    email: 'admin@gmail.com',
+    password: 'admin123',
+  },
+  adminWithEmailRegisteredResponse: {
+    message: [
+      'email must be unique',
+    ],
+    statusCode: 409,
   },
 };
