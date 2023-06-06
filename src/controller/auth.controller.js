@@ -4,15 +4,8 @@ const jwt = require('jsonwebtoken');
 const catchAsync = require('../utils/catchAsync');
 const { User, Admin } = require('../models');
 const ApiError = require('../utils/ApiError');
-const { userRegisterSchema } = require('../validator/auth.validator');
 const CONST = require('../utils/constant');
 
-/**
- * TESTING
- * TODO: IF REQ.BODY IS UNDEFINED IT SHOULD RETURN HTTP 400 BAD REQUEST
- * TODO: IF VALIDATION FAILED IT SHOULD RETURN PROPPER STATUS CODE AND ERROR MESSAGE
- * TODO: IF USER REGISTERED WITH SAME EMAIL IT SHOULD RETURN HTTP 409 CONFLICT
- */
 const registerUser = catchAsync(async (req, res, next) => {
   const { body } = req;
   const passwordHash = await bcrypt.hash(body.password, 9);
