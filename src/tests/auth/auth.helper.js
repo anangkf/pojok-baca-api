@@ -91,7 +91,7 @@ module.exports = {
     email: 'test@mail',
     password: 'test1234',
   },
-  userCredentialsWithInvalidEmailResponse: {
+  credentialsWithInvalidEmailResponse: {
     message: [
       '"email" must be a valid email',
     ],
@@ -102,7 +102,7 @@ module.exports = {
     email: 'test@mail.com',
     password: 'test123',
   },
-  userCredentialsWithInvalidPasswordResponse: {
+  credentialsWithInvalidPasswordResponse: {
     message: [
       '"password" length must be at least 8 characters long',
     ],
@@ -113,7 +113,7 @@ module.exports = {
     email: 'test@mail.com',
     password: 'test12345',
   },
-  invalidUserCredentialsResponse: {
+  invalidCredentialsResponse: {
     message: 'invalid email or password',
     statusCode: 401,
   },
@@ -159,5 +159,21 @@ module.exports = {
       'email must be unique',
     ],
     statusCode: 409,
+  },
+  validAdminCredentials: {
+    email: 'admin@gmail.com',
+    password: 'admin123',
+  },
+  invalidAdminCredentials: {
+    email: 'admin@gmail.com',
+    password: 'admin1234',
+  },
+  adminCredentialsWithInvalidEmail: {
+    email: 'admin.com',
+    password: 'admin123',
+  },
+  adminCredentialsWithInvalidPassword: {
+    email: 'admin@gmail.com',
+    password: 'admin',
   },
 };
