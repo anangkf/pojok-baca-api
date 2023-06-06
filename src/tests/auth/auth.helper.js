@@ -83,9 +83,39 @@ module.exports = {
     gender: 'male',
     password: 'anang1234',
   },
-  userCredentials: {
+  validUserCredentials: {
     email: 'test@mail.com',
     password: 'test1234',
+  },
+  userCredentialsWithInvalidEmail: {
+    email: 'test@mail',
+    password: 'test1234',
+  },
+  userCredentialsWithInvalidEmailResponse: {
+    message: [
+      '"email" must be a valid email',
+    ],
+    statusCode: 400,
+    stack: 'ValidationError: "email" must be a valid email',
+  },
+  userCredentialsWithInvalidPassword: {
+    email: 'test@mail.com',
+    password: 'test123',
+  },
+  userCredentialsWithInvalidPasswordResponse: {
+    message: [
+      '"password" length must be at least 8 characters long',
+    ],
+    statusCode: 400,
+    stack: 'ValidationError: "password" length must be at least 8 characters long',
+  },
+  invalidUserCredentials: {
+    email: 'test@mail.com',
+    password: 'test12345',
+  },
+  invalidUserCredentialsResponse: {
+    message: 'invalid email or password',
+    statusCode: 401,
   },
   adminsInDB,
   initialAdmin: [
