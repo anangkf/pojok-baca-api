@@ -9,6 +9,8 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 app.use(passport.initialize());
+// passport jwt strategy
+require('./strategy/jwt.strategy');
 
 // enable request.body compression
 app.use(compression());
