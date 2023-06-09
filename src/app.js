@@ -8,6 +8,8 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 app.use(passport.initialize());
+// passport jwt strategy
+require('./strategy/jwt.strategy');
 
 // parse request body to json
 app.use(express.json());
