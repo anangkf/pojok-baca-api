@@ -37,9 +37,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
     },
     thumbnail: {
+      allowNull: false,
       type: DataTypes.STRING,
     },
     ebookUrl: {
+      allowNull: false,
       type: DataTypes.STRING,
     },
     genreIds: {
