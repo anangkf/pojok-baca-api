@@ -4,7 +4,11 @@ const getAuthor = require('../utils/getAuthor');
 const getPublisher = require('../utils/getPublisher');
 const getGenres = require('../utils/getGenres');
 
-const getAll = catchAsync(async (req, res) => res.send());
+const getAll = catchAsync(async (req, res) => {
+  const books = await Book.findAll();
+
+  return res.json(books);
+});
 
 const create = catchAsync(async (req, res) => {
   const { body } = req;
