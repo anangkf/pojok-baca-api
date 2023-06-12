@@ -1,8 +1,10 @@
+const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { Book, Author } = require('../models/index');
 const getAuthor = require('../utils/getAuthor');
 const getPublisher = require('../utils/getPublisher');
 const getGenres = require('../utils/getGenres');
+const ApiError = require('../utils/ApiError');
 
 const getAll = catchAsync(async (req, res) => {
   const books = await Book.findAll();
@@ -30,7 +32,18 @@ const create = catchAsync(async (req, res) => {
   return res.json(savedBook);
 });
 
+const getById = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const book = await Book.findOne({
+    where: { id },
+  });
+
+  if (!book) return res.status(httpStatus.NOT_FOUND).send(new ApiError(httpStatus.NOT_FOUND, 'Not Found'));
+  return res.json(book);
+});
+
 module.exports = {
   getAll,
   create,
+  getById,
 };
