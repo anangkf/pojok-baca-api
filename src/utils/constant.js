@@ -2,6 +2,8 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
 const {
+  SUPABASE_HOST,
+  SUPABASE_SERVICE_KEY,
   PG_HOST,
   PG_USER,
   PG_PASSWORD,
@@ -33,7 +35,12 @@ default:
   PG_SCHEMA = PG_SCHEMA_DEV;
 }
 
+const SUPABASE_STORAGE_URL = `${SUPABASE_HOST}/storage/v1`;
+
 module.exports = {
+  SUPABASE_HOST,
+  SUPABASE_STORAGE_URL,
+  SUPABASE_SERVICE_KEY,
   PG_HOST,
   PG_USER,
   PG_PASSWORD,

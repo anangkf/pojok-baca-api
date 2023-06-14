@@ -45,8 +45,9 @@ const errorHandler = (err, req, res, next) => {
 
   logger.error(err);
 
-  return res.status(httpStatus.INTERNAL_SERVER_ERROR)
-    .json(new ApiError(statusCode, message, stack, isOperational));
+  const code = statusCode || httpStatus.INTERNAL_SERVER_ERROR;
+  return res.status(code)
+    .json(new ApiError(code, message, stack, isOperational));
   // next(err);
 };
 

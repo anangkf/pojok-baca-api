@@ -1,10 +1,13 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-const { Book, Author } = require('../models/index');
+const { Book } = require('../models/index');
 const getAuthor = require('../utils/getAuthor');
 const getPublisher = require('../utils/getPublisher');
 const getGenres = require('../utils/getGenres');
 const ApiError = require('../utils/ApiError');
+const storageClient = require('../config/storage');
+const getImageFromLocal = require('../utils/getImageFromLocal');
+const getImageUrl = require('../utils/getImageUrl');
 
 const getAll = catchAsync(async (req, res) => {
   const books = await Book.findAll();
@@ -42,8 +45,28 @@ const getById = catchAsync(async (req, res) => {
   return res.json(book);
 });
 
+const uploadThumbnail = catchAsync(async (req, res) => {
+  const { file } = req;
+  if (!file) throw new ApiError(httpStatus.BAD_REQUEST, 'thumbnail of type image/jpeg or image/png is required');
+
+  const { filename, mimetype } = file;
+  const image = getImageFromLocal(file);
+
+  const { data, error } = await storageClient
+    .from('thumbnail')
+    .upload(filename, image, {
+      contentType: mimetype,
+    });
+
+  if (error) throw new ApiError(Number(error.statusCode), error.message);
+
+  const url = getImageUrl({ bucket: 'thumbnail', filename });
+  return res.status(httpStatus.CREATED).json({ url });
+});
+
 module.exports = {
   getAll,
   create,
   getById,
+  uploadThumbnail,
 };
