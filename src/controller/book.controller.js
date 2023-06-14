@@ -1,4 +1,5 @@
 const httpStatus = require('http-status');
+const Joi = require('joi');
 const catchAsync = require('../utils/catchAsync');
 const { Book } = require('../models/index');
 const getAuthor = require('../utils/getAuthor');
@@ -24,8 +25,8 @@ const create = catchAsync(async (req, res) => {
   const genres = await getGenres(genreNames);
   const genreIds = genres.map(({ id }) => id);
 
-  delete body.publisher;
-  delete body.author;
+  delete body.publisherName;
+  delete body.authorName;
   delete body.genreNames;
 
   const savedBook = await Book.create({
@@ -36,12 +37,8 @@ const create = catchAsync(async (req, res) => {
 });
 
 const getById = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const book = await Book.findOne({
-    where: { id },
-  });
-
-  if (!book) return res.status(httpStatus.NOT_FOUND).send(new ApiError(httpStatus.NOT_FOUND, 'Not Found'));
+  // the validateId middleware return specified book in req.book
+  const { book } = req;
   return res.json(book);
 });
 
@@ -83,10 +80,34 @@ const uploadEbook = catchAsync(async (req, res) => {
   return res.status(httpStatus.CREATED).json({ url });
 });
 
+const editBookById = catchAsync(async (req, res) => {
+  const { book, body } = req;
+  const { authorName, publisherName, genreNames } = body;
+
+  const { id: authorId } = await getAuthor(authorName);
+  const { id: publisherId } = await getPublisher(publisherName);
+  const genres = await getGenres(genreNames);
+  const genreIds = genres.map((genre) => genre.id);
+
+  delete body.publisherName;
+  delete body.authorName;
+  delete body.genreNames;
+
+  const [_, editedBook] = await Book.update({
+    ...book, ...body, authorId, publisherId, genreIds,
+  }, {
+    where: { id: book.id },
+    returning: true,
+  });
+
+  return res.send(editedBook[0]);
+});
+
 module.exports = {
   getAll,
   create,
   getById,
   uploadThumbnail,
   uploadEbook,
+  editBookById,
 };
