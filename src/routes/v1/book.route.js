@@ -11,5 +11,6 @@ router.get('/', bookController.getAll);
 router.post('/', jwtGuard, adminGuard, Validator('createBookSchema'), bookController.create);
 router.get('/:id', bookController.getById);
 router.post('/thumbnail', jwtGuard, adminGuard, upload.single('thumbnail'), bookController.uploadThumbnail);
+router.post('/ebook', jwtGuard, adminGuard, upload.single('ebook'), bookController.uploadEbook);
 
 module.exports = router;

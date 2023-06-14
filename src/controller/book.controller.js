@@ -6,8 +6,8 @@ const getPublisher = require('../utils/getPublisher');
 const getGenres = require('../utils/getGenres');
 const ApiError = require('../utils/ApiError');
 const storageClient = require('../config/storage');
-const getImageFromLocal = require('../utils/getImageFromLocal');
-const getImageUrl = require('../utils/getImageUrl');
+const getFileFromLocal = require('../utils/getFileFromLocal');
+const getFileUrl = require('../utils/getFileUrl');
 
 const getAll = catchAsync(async (req, res) => {
   const books = await Book.findAll();
@@ -50,7 +50,7 @@ const uploadThumbnail = catchAsync(async (req, res) => {
   if (!file) throw new ApiError(httpStatus.BAD_REQUEST, 'thumbnail of type image/jpeg or image/png is required');
 
   const { filename, mimetype } = file;
-  const image = getImageFromLocal(file);
+  const image = getFileFromLocal(file);
 
   const { data, error } = await storageClient
     .from('thumbnail')
@@ -60,7 +60,26 @@ const uploadThumbnail = catchAsync(async (req, res) => {
 
   if (error) throw new ApiError(Number(error.statusCode), error.message);
 
-  const url = getImageUrl({ bucket: 'thumbnail', filename });
+  const url = getFileUrl({ bucket: 'thumbnail', filename });
+  return res.status(httpStatus.CREATED).json({ url });
+});
+
+const uploadEbook = catchAsync(async (req, res) => {
+  const { file } = req;
+  if (!file) throw new ApiError(httpStatus.BAD_REQUEST, 'ebook of type application/pdf is required');
+
+  const { filename, mimetype } = file;
+  const ebook = getFileFromLocal(file);
+
+  const { data, error } = await storageClient
+    .from('ebook')
+    .upload(filename, ebook, {
+      contentType: mimetype,
+    });
+
+  if (error) throw new ApiError(Number(error.statusCode), error.message);
+
+  const url = getFileUrl({ bucket: 'ebook', filename });
   return res.status(httpStatus.CREATED).json({ url });
 });
 
@@ -69,4 +88,5 @@ module.exports = {
   create,
   getById,
   uploadThumbnail,
+  uploadEbook,
 };
