@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
   }, {
+    paranoid: true,
     sequelize,
     modelName: 'Admin',
   });

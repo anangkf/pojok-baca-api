@@ -57,6 +57,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 0.0,
     },
   }, {
+    paranoid: true,
     sequelize,
     modelName: 'Book',
   });
