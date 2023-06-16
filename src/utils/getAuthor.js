@@ -6,14 +6,11 @@ const { Author } = require('../models/index');
  * @return {Promise<Object>} author object
  */
 const getAuthor = async (name) => {
-  const authorInDB = await Author.findOne({
+  const [author] = await Author.findCreateFind({
     where: { name },
   });
 
-  if (!authorInDB) {
-    return Author.create({ name });
-  }
-  return authorInDB;
+  return author;
 };
 
 module.exports = getAuthor;

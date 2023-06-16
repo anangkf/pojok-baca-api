@@ -6,14 +6,11 @@ const { Publisher } = require('../models/index');
  * @return {Promise<Object>} publisher object
  */
 const getPublisher = async (name) => {
-  const publisherInDB = await Publisher.findOne({
+  const [publisher] = await Publisher.findCreateFind({
     where: { name },
   });
 
-  if (!publisherInDB) {
-    return Publisher.create({ name });
-  }
-  return publisherInDB;
+  return publisher;
 };
 
 module.exports = getPublisher;

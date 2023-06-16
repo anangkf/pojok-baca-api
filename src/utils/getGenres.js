@@ -10,15 +10,11 @@ const ApiError = require('./ApiError');
 const getGenres = async (genres) => {
   try {
     const genreArr = genres.map(async (name) => {
-      const genreInDB = await Genre.findOne({
+      const [genre] = await Genre.findCreateFind({
         where: { name },
       });
 
-      if (!genreInDB) {
-        const newGenre = await Genre.create({ name });
-        return newGenre;
-      }
-      return genreInDB;
+      return genre;
     });
     return Promise.all(genreArr);
   } catch (error) {
