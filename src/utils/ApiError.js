@@ -1,10 +1,17 @@
 // class ApiError extends Error {
 class ApiError {
-  constructor(statusCode, message, stack) {
+  constructor(statusCode, message, stack, isOperational = false) {
     // super(message);
     this.message = message;
     this.statusCode = statusCode;
-    this.stack = stack;
+    if (stack) {
+      this.stack = stack;
+    } else {
+      Error.captureStackTrace(this, this.constructor);
+    }
+    if (isOperational) {
+      this.isOperational = isOperational;
+    }
   }
 }
 

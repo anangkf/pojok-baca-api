@@ -37,9 +37,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
     },
     thumbnail: {
+      allowNull: false,
       type: DataTypes.STRING,
     },
     ebookUrl: {
+      allowNull: false,
       type: DataTypes.STRING,
     },
     genreIds: {
@@ -55,6 +57,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 0.0,
     },
   }, {
+    paranoid: true,
     sequelize,
     modelName: 'Book',
   });

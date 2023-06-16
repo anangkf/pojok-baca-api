@@ -5,7 +5,9 @@ const ApiError = require('../utils/ApiError');
 // eslint-disable-next-line consistent-return
 const errorHandler = (err, req, res, next) => {
   let { message } = err;
-  const { name, stack } = err;
+  const {
+    name, stack, statusCode, isOperational,
+  } = err;
 
   // joi validation error
   if (name === 'ValidationError') {
@@ -34,11 +36,19 @@ const errorHandler = (err, req, res, next) => {
       .json(new ApiError(httpStatus.CONFLICT, message, stack));
   }
 
-  logger.error(err);
-  // logger.error(message);
-  // logger.error(stack);
+  // handle operational api error
+  if (isOperational) {
+    return res
+      .status(statusCode)
+      .json(new ApiError(statusCode, message, stack, isOperational));
+  }
 
-  next(err);
+  logger.error(err);
+
+  const code = statusCode || httpStatus.INTERNAL_SERVER_ERROR;
+  return res.status(code)
+    .json(new ApiError(code, message, stack, isOperational));
+  // next(err);
 };
 
 module.exports = errorHandler;

@@ -1,9 +1,9 @@
 const passport = require('passport');
-const { Strategy, ExtractJwt } = require('passport-jwt');
+const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 const { User, Admin } = require('../models/index');
 const CONST = require('../utils/constant');
 
-const jwtStrategy = new Strategy(
+const jwtStrategy = new JwtStrategy(
   {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: CONST.JWT_SECRET,
@@ -13,7 +13,7 @@ const jwtStrategy = new Strategy(
   async (payload, done) => {
     try {
       if (payload.role === 'user') {
-        const user = await User.findAll({
+        const user = await User.findOne({
           where: {
             id: payload.sub,
           },
@@ -24,7 +24,7 @@ const jwtStrategy = new Strategy(
       }
 
       if (payload.role === 'admin') {
-        const admin = await Admin.findAll({
+        const admin = await Admin.findOne({
           where: {
             id: payload.sub,
           },
