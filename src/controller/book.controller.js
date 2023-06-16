@@ -103,6 +103,15 @@ const editBookById = catchAsync(async (req, res) => {
   return res.send(editedBook[0]);
 });
 
+const deleteById = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const [deleted] = await Book.destroy({
+    where: { id },
+    returning: true,
+  });
+  res.json(deleted);
+});
+
 module.exports = {
   getAll,
   create,
@@ -110,4 +119,5 @@ module.exports = {
   uploadThumbnail,
   uploadEbook,
   editBookById,
+  deleteById,
 };
