@@ -1,7 +1,8 @@
 const httpStatus = require('http-status');
-const Joi = require('joi');
 const catchAsync = require('../utils/catchAsync');
-const { Book } = require('../models/index');
+const {
+  Book, Author, Publisher, BookGenre, Genre,
+} = require('../models/index');
 const getAuthor = require('../utils/getAuthor');
 const getPublisher = require('../utils/getPublisher');
 const getGenres = require('../utils/getGenres');
@@ -11,7 +12,27 @@ const getFileFromLocal = require('../utils/getFileFromLocal');
 const getFileUrl = require('../utils/getFileUrl');
 
 const getAll = catchAsync(async (req, res) => {
-  const books = await Book.findAll();
+  const books = await Book.findAll({
+    include: [
+      {
+        model: Author,
+        as: 'author',
+        attributes: ['id', 'name'],
+      }, {
+        model: Publisher,
+        as: 'publisher',
+        attributes: ['id', 'name'],
+      }, {
+        model: Genre,
+        through: { model: BookGenre, attributes: [] },
+        as: 'genres',
+        attributes: ['id', 'name'],
+      },
+    ],
+    attributes: {
+      exclude: ['authorId', 'publisherId', 'deletedAt'],
+    },
+  });
 
   return res.json(books);
 });
@@ -20,20 +41,22 @@ const create = catchAsync(async (req, res) => {
   const { body } = req;
   const { authorName, publisherName, genreNames } = body;
 
-  const { id: authorId } = await getAuthor(authorName);
-  const { id: publisherId } = await getPublisher(publisherName);
-  const genres = await getGenres(genreNames);
-  const genreIds = genres.map(({ id }) => id);
+  const author = await getAuthor(authorName);
+  const publisher = await getPublisher(publisherName);
 
-  delete body.publisherName;
-  delete body.authorName;
-  delete body.genreNames;
-
-  const savedBook = await Book.create({
-    ...body, authorId, publisherId, genreIds,
+  const { dataValues: savedBook } = await Book.create({
+    ...body, authorId: author.id, publisherId: publisher.id,
   });
 
-  return res.json(savedBook);
+  const genres = await getGenres(savedBook.id, genreNames);
+
+  delete savedBook.publisherId;
+  delete savedBook.authorId;
+  delete savedBook.deletedAt;
+
+  return res.json({
+    ...savedBook, author, publisher, genres,
+  });
 });
 
 const getById = catchAsync(async (req, res) => {
@@ -84,23 +107,24 @@ const editBookById = catchAsync(async (req, res) => {
   const { book, body } = req;
   const { authorName, publisherName, genreNames } = body;
 
-  const { id: authorId } = await getAuthor(authorName);
-  const { id: publisherId } = await getPublisher(publisherName);
-  const genres = await getGenres(genreNames);
-  const genreIds = genres.map((genre) => genre.id);
+  const author = await getAuthor(authorName);
+  const publisher = await getPublisher(publisherName);
+  const genres = await getGenres(book.id, genreNames);
 
   delete body.publisherName;
   delete body.authorName;
   delete body.genreNames;
 
   const [_, editedBook] = await Book.update({
-    ...book, ...body, authorId, publisherId, genreIds,
+    ...book, ...body, authorId: author.id, publisherId: publisher.id,
   }, {
     where: { id: book.id },
     returning: true,
   });
 
-  return res.send(editedBook[0]);
+  return res.send({
+    ...editedBook[0].dataValues, author, publisher, genres,
+  });
 });
 
 const deleteById = catchAsync(async (req, res) => {
