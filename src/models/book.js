@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Book.belongsTo(models.Author, { foreignKey: 'authorId', as: 'author' });
+      Book.belongsTo(models.Publisher, { foreignKey: 'publisherId', as: 'publisher' });
+      Book.belongsToMany(models.Genre, { through: 'BookGenres', foreignKey: 'bookId', as: 'genres' });
     }
   }
   Book.init({
@@ -44,10 +47,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING,
     },
-    genreIds: {
-      allowNull: false,
-      type: DataTypes.ARRAY(DataTypes.UUID),
-    },
+    // genreIds: {
+    //   allowNull: false,
+    //   type: DataTypes.ARRAY(DataTypes.UUID),
+    // },
     pages: {
       allowNull: false,
       type: DataTypes.INTEGER,
