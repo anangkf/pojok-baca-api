@@ -70,9 +70,12 @@ const adminLogin = catchAsync(async (req, res) => {
   return res.json({ accessToken, refreshToken });
 });
 
+const getInfo = catchAsync(async (req, res) => res.json(req.user));
+
 module.exports = {
   registerUser,
   userLogin,
   registerAdmin,
   adminLogin,
+  getInfo,
 };

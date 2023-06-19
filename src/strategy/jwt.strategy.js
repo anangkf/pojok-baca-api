@@ -17,6 +17,9 @@ const jwtStrategy = new JwtStrategy(
           where: {
             id: payload.sub,
           },
+          attributes: {
+            exclude: ['deletedAt'],
+          },
         });
 
         if (user) return done(null, user);
@@ -27,6 +30,9 @@ const jwtStrategy = new JwtStrategy(
         const admin = await Admin.findOne({
           where: {
             id: payload.sub,
+          },
+          attributes: {
+            exclude: ['deletedAt'],
           },
         });
 
