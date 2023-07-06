@@ -16,6 +16,11 @@ const createBookSchema = Joi.object({
   language: Joi.string().required(),
 });
 
+const addBookToShelfSchema = Joi.object({
+  bookId: Joi.string().uuid().required(),
+});
+
 module.exports = {
   createBookSchema,
+  addBookToShelfSchema,
 };

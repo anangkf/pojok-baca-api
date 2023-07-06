@@ -53,6 +53,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     finishedAt: {
       type: DataTypes.DATE,
+      defaultValue: null,
     },
   }, {
     paranoid: true,
