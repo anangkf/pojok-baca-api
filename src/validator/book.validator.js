@@ -12,6 +12,8 @@ const createBookSchema = Joi.object({
   genreNames: Joi.array().items(Joi.string()).required(),
   pages: Joi.number().positive().required(),
   rating: Joi.number().max(5),
+  description: Joi.string().required(),
+  language: Joi.string().required(),
 });
 
 module.exports = {
