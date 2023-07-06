@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const {
-  Book, Author, Publisher, BookGenre, Genre,
+  Book, Author, Publisher, BookGenre, Genre, User, UserBook,
 } = require('../models/index');
 const getAuthor = require('../utils/getAuthor');
 const getPublisher = require('../utils/getPublisher');
@@ -27,6 +27,11 @@ const getAll = catchAsync(async (req, res) => {
         through: { model: BookGenre, attributes: [] },
         as: 'genres',
         attributes: ['id', 'name'],
+      }, {
+        model: User,
+        through: { model: UserBook, attributes: [] },
+        as: 'readers',
+        attributes: ['id', 'name', 'email', 'gender'],
       },
     ],
     attributes: {
@@ -80,6 +85,11 @@ const getById = catchAsync(async (req, res) => {
           through: { model: BookGenre, attributes: [] },
           as: 'genres',
           attributes: ['id', 'name'],
+        }, {
+          model: User,
+          through: { model: UserBook, attributes: [] },
+          as: 'readers',
+          attributes: ['id', 'name', 'email', 'gender'],
         },
       ],
       attributes: {

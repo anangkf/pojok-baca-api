@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Book.belongsTo(models.Author, { foreignKey: 'authorId', as: 'author' });
       Book.belongsTo(models.Publisher, { foreignKey: 'publisherId', as: 'publisher' });
       Book.belongsToMany(models.Genre, { through: 'BookGenres', foreignKey: 'bookId', as: 'genres' });
+      Book.belongsToMany(models.User, { through: 'UserBooks', foreignKey: 'bookId', as: 'readers' });
     }
   }
   Book.init({
@@ -47,10 +48,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING,
     },
-    // genreIds: {
-    //   allowNull: false,
-    //   type: DataTypes.ARRAY(DataTypes.UUID),
-    // },
     pages: {
       allowNull: false,
       type: DataTypes.INTEGER,
@@ -58,6 +55,14 @@ module.exports = (sequelize, DataTypes) => {
     rating: {
       type: DataTypes.FLOAT,
       defaultValue: 0.0,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    language: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   }, {
     paranoid: true,
