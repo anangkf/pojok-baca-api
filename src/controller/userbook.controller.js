@@ -1,7 +1,9 @@
+const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const {
   UserBook, Book, Author, Publisher, Genre, BookGenre,
 } = require('../models/index');
+const ApiError = require('../utils/ApiError');
 
 const populateUserBook = {
   include: [
@@ -64,7 +66,44 @@ const create = catchAsync(async (req, res) => {
   return res.json(userBook);
 });
 
+const update = catchAsync(async (req, res) => {
+  const { body, params, user } = req;
+  let { userbook } = req;
+  userbook = await userbook.reload(populateUserBook);
+
+  // only allow related user to edit the userbook
+  if (user.id !== userbook.userId) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Only related user can edit his books in shelf');
+  }
+
+  // prevent pagesRead exceeding actual book's pages count
+  if (body.pagesRead > userbook.book.pages) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'pagesRead count cannot be greater than book pages');
+  }
+
+  // if pagesRead === book.pages set completed to true and finishedAt to timestamp now
+  // this way can prevent the app rolling back completed status to false if pagesRead < book.pages
+  if (body.pagesRead === userbook.book.pages) {
+    body.completed = true;
+    body.finishedAt = new Date().toISOString();
+  }
+
+  const updatedUserBookData = {
+    ...userbook.dataValues,
+    ...body,
+  };
+  const [_, [updatedUserBook]] = await UserBook.update(updatedUserBookData, {
+    where: {
+      id: params.id,
+    },
+    returning: true,
+  });
+
+  return res.json(updatedUserBook);
+});
+
 module.exports = {
   getAll,
   create,
+  update,
 };

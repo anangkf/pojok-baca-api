@@ -20,7 +20,12 @@ const addBookToShelfSchema = Joi.object({
   bookId: Joi.string().uuid().required(),
 });
 
+const updateBookInShelfSchema = Joi.object({
+  pagesRead: Joi.number().min(1),
+});
+
 module.exports = {
   createBookSchema,
   addBookToShelfSchema,
+  updateBookInShelfSchema,
 };
