@@ -9,6 +9,7 @@ const router = express.Router();
 
 router.get('/', jwtGuard, userGuard, userBookController.getAll);
 router.post('/', jwtGuard, userGuard, Validator('addBookToShelfSchema'), userBookController.create);
-router.put('/:id', jwtGuard, userGuard, validateId('UserBook'), Validator('updateBookInShelfSchema'), userBookController.update);
+router.put('/:id', jwtGuard, userGuard, validateId('UserBook'), Validator('updateBookInShelfSchema'), userBookController.updateById);
+router.delete('/:id', jwtGuard, userGuard, validateId('UserBook'), userBookController.deleteById);
 
 module.exports = router;

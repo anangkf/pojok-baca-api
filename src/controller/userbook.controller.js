@@ -66,7 +66,7 @@ const create = catchAsync(async (req, res) => {
   return res.json(userBook);
 });
 
-const update = catchAsync(async (req, res) => {
+const updateById = catchAsync(async (req, res) => {
   const { body, params, user } = req;
   let { userbook } = req;
   userbook = await userbook.reload(populateUserBook);
@@ -102,8 +102,27 @@ const update = catchAsync(async (req, res) => {
   return res.json(updatedUserBook);
 });
 
+const deleteById = catchAsync(async (req, res) => {
+  const { userbook, user } = req;
+
+  // only allow related user to delete the userbook
+  if (user.id !== userbook.userId) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Only related user can delete his books in shelf');
+  }
+
+  const [deletedUserBook] = await UserBook.destroy({
+    where: {
+      id: userbook.id,
+    },
+    returning: true,
+  });
+
+  return res.json(deletedUserBook);
+});
+
 module.exports = {
   getAll,
   create,
-  update,
+  updateById,
+  deleteById,
 };
