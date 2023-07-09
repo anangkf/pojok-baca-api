@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const {
-  Book, Author, Publisher, BookGenre, Genre,
+  Book, Author, Publisher, BookGenre, Genre, User, UserBook,
 } = require('../models/index');
 const getAuthor = require('../utils/getAuthor');
 const getPublisher = require('../utils/getPublisher');
@@ -27,6 +27,11 @@ const getAll = catchAsync(async (req, res) => {
         through: { model: BookGenre, attributes: [] },
         as: 'genres',
         attributes: ['id', 'name'],
+      }, {
+        model: User,
+        through: { model: UserBook, attributes: [] },
+        as: 'readers',
+        attributes: ['id', 'name', 'email', 'gender'],
       },
     ],
     attributes: {
@@ -60,8 +65,38 @@ const create = catchAsync(async (req, res) => {
 });
 
 const getById = catchAsync(async (req, res) => {
-  // the validateId middleware return specified book in req.book
-  const { book } = req;
+  // the validateId middleware return specified id in req.id and book in req.book
+  const { id } = req;
+
+  const book = await Book.findByPk(
+    id,
+    {
+      include: [
+        {
+          model: Author,
+          as: 'author',
+          attributes: ['id', 'name'],
+        }, {
+          model: Publisher,
+          as: 'publisher',
+          attributes: ['id', 'name'],
+        }, {
+          model: Genre,
+          through: { model: BookGenre, attributes: [] },
+          as: 'genres',
+          attributes: ['id', 'name'],
+        }, {
+          model: User,
+          through: { model: UserBook, attributes: [] },
+          as: 'readers',
+          attributes: ['id', 'name', 'email', 'gender'],
+        },
+      ],
+      attributes: {
+        exclude: ['authorId', 'publisherId', 'deletedAt'],
+      },
+    },
+  );
   return res.json(book);
 });
 

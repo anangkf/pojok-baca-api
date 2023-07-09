@@ -18,7 +18,7 @@ const validateId = (entity) => async (req, res, next) => {
         'string.guid': 'Invalid UUID',
       })
       .validateAsync(id);
-
+    req.id = id;
     const row = await model[entity].findByPk(id);
 
     if (!row) throw new ApiError(httpStatus.NOT_FOUND, 'Not Found');
