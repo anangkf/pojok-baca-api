@@ -8,6 +8,7 @@ const validateId = require('../../middleware/validateId');
 const router = express.Router();
 
 router.get('/', jwtGuard, userGuard, userBookController.getAll);
+router.get('/:id', jwtGuard, userGuard, userBookController.getById);
 router.post('/', jwtGuard, userGuard, Validator('addBookToShelfSchema'), userBookController.create);
 router.put('/:id', jwtGuard, userGuard, validateId('UserBook'), Validator('updateBookInShelfSchema'), userBookController.updateById);
 router.delete('/:id', jwtGuard, userGuard, validateId('UserBook'), userBookController.deleteById);
