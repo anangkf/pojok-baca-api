@@ -3,6 +3,7 @@ const cors = require('cors');
 const { default: helmet } = require('helmet');
 const passport = require('passport');
 const compression = require('compression');
+const morgan = require('morgan');
 const appRouter = require('./routes/index');
 const notFoundException = require('./middleware/notFoundException');
 const errorHandler = require('./middleware/errorHandler');
@@ -20,7 +21,8 @@ app.use(express.json());
 app.use(cors());
 // secure http headers
 app.use(helmet());
-
+// added logger
+app.use(morgan('tiny'));
 // app router
 app.use('/api', appRouter);
 

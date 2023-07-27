@@ -48,6 +48,18 @@ const getAll = catchAsync(async (req, res) => {
   res.json(userBooks);
 });
 
+const getById = catchAsync(async (req, res) => {
+  const { params } = req;
+  const userBook = await UserBook.findOne({
+    where: {
+      id: params.id,
+    },
+    ...populateUserBook,
+  });
+
+  res.json(userBook);
+});
+
 const create = catchAsync(async (req, res) => {
   const { user, body } = req;
   const [userBook, newEntry] = await UserBook.findCreateFind({
@@ -122,6 +134,7 @@ const deleteById = catchAsync(async (req, res) => {
 
 module.exports = {
   getAll,
+  getById,
   create,
   updateById,
   deleteById,

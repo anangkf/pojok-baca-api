@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const {
-  Book, Author, Publisher, BookGenre, Genre, User, UserBook,
+  Book, Author, Publisher, BookGenre, Genre, User, UserBook, Sequelize,
 } = require('../models/index');
 const getAuthor = require('../utils/getAuthor');
 const getPublisher = require('../utils/getPublisher');
@@ -11,8 +11,22 @@ const storageClient = require('../config/storage');
 const getFileFromLocal = require('../utils/getFileFromLocal');
 const getFileUrl = require('../utils/getFileUrl');
 
+const { iLike } = Sequelize.Op;
+
 const getAll = catchAsync(async (req, res) => {
+  const { query: { search } } = req;
+  let where = {};
+
+  if (search) {
+    where = {
+      title: {
+        [iLike]: `%${search}%`,
+      },
+    };
+  }
+
   const books = await Book.findAll({
+    where,
     include: [
       {
         model: Author,
